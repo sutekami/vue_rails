@@ -37,7 +37,7 @@ export default new Vuex.Store({
             }
         },
         createTaskResult(_, data) {
-            if (data.result) { }
+            if (data.result) console.log(true);
         },
         getMyTask(state, data) {
             for (let i of data.task) {
@@ -72,6 +72,7 @@ export default new Vuex.Store({
             commit('createTaskResult', res.data);
         },
         async getMyTask({ commit }) {
+            this.state.myTasks = [];
             const res = await api.post('get_my_task', { user_id: this.state.userId });
             commit('getMyTask', res.data);
         }

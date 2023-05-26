@@ -28,8 +28,9 @@ export default ({
         this.$store.dispatch('getMyTask');
     },
     methods: {
-        createTask() {
-            this.$store.dispatch('createTask', this.context);
+        async createTask() {
+            await this.$store.dispatch('createTask', this.context);
+            this.$store.dispatch('getMyTask');
         }
     }
 })
