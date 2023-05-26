@@ -1,7 +1,8 @@
 <template>
     <div :id="signin">
-        <h1>SWITTER</h1>
+        <h1>タスク共有アプリ</h1>
         <h2>サインイン</h2>
+        <h1 :class="'mistake'" v-if="!$store.state.signInResult">ユーザー名もしくはパスワードが間違っています。</h1>
         <div><input type="text" placeholder="ユーザー名 or メールアドレス" v-model="user_id"></div>
         <div><input type="password" placeholder="パスワード" v-model="password"></div>
         <button @click="signIn">ログイン</button>
@@ -18,6 +19,9 @@ export default ({
             password: '',
         }
     },
+    created() {
+        this.$store.commit('initializeSignInResult')
+    },
     methods: {
         signIn() {
             const user = {
@@ -25,7 +29,7 @@ export default ({
                 password: this.password
             }
             this.$store.dispatch('signIn', user);
-        }
+        },
     }
 })
 </script>
