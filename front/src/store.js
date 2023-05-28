@@ -40,7 +40,7 @@ export default new Vuex.Store({
             for (let i of data.task) {
                 state.myTasks.push(i);
             }
-        },
+        }
     },
     actions: {
         async signUp({ commit }, newUser) {
@@ -77,6 +77,9 @@ export default new Vuex.Store({
                 id: id,
                 user_id: this.state.userId,
             });
+        },
+        async completeTask(_, myTask) {
+            await api.post('complete_task', myTask);
         }
     },
     getters: {

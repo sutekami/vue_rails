@@ -9,8 +9,9 @@
         <div class="tasklist">
             <ul>
                 <li v-for="myTask in $store.state.myTasks" :key="myTask.id" :style="'display: flex;'">
-                    <span :class="{under_line: complete}">{{ myTask.context }}</span>
-                    <input type="checkbox" v-model="complete">
+                    <span :class="{ under_line: myTask.checked }">{{ myTask.context }}</span>
+                    <button v-if="!myTask.checked" @click="completeTask(myTask)">完了</button>
+                    <button v-else @click="completeTask(myTask)">未完了</button>
                     <button @click="deleteTask(myTask.id)">タスク削除</button>
                 </li>
             </ul>
@@ -25,7 +26,6 @@ export default ({
         return {
             context: '',
             notContext: true,
-            complete: false,
         }
     },
     created() {
@@ -41,19 +41,21 @@ export default ({
         async deleteTask(id) {
             await this.$store.dispatch('deleteTask', id);
             this.$store.dispatch('getMyTask');
-        }        
+        },
+        async completeTask(myTask) {
+            myTask.checked = !myTask.checked;
+            await this.$store.dispatch('completeTask', myTask);
+            this.$store.dispatch('getMyTask');
+        }
     },
     watch: {
-        context(newContext){
+        context(newContext) {
             if (newContext) {
                 this.notContext = false;
             } else {
                 this.notContext = true;
             }
         },
-        complete(newComplete) {
-            console.log(newComplete);
-        }
     }
 })
 </script>

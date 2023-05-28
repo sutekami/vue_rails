@@ -1,5 +1,5 @@
 class TaskController < ApplicationController
-    protect_from_forgery :except => [:create, :index, :delete]
+    protect_from_forgery :except => [:create, :index, :delete, :update]
 
     def index
         task = Task.where(user_id: params[:user_id])
@@ -13,6 +13,7 @@ class TaskController < ApplicationController
     end
 
     def delete
+        p params
         task = Task.find(params[:id])
         if task[:user_id] == params[:user_id] then
             task.destroy
@@ -20,6 +21,12 @@ class TaskController < ApplicationController
         else
             render json: { result: false }
         end
+    end
+
+    def update
+        task = Task.find(params[:id])
+        task.update(task_params)
+        render json: { result: true }
     end
 
     private
