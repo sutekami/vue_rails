@@ -41,6 +41,7 @@ export default new Vuex.Store({
         },
         getMyTask(state, data) {
             for (let i of data.task) {
+                console.log(i);
                 state.myTasks.push(i);
             }
         }

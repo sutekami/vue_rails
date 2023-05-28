@@ -31,6 +31,7 @@ export default ({
         async createTask() {
             await this.$store.dispatch('createTask', this.context);
             this.$store.dispatch('getMyTask');
+            this.context = '';
         }
     }
 })
