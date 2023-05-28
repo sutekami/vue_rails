@@ -1,5 +1,5 @@
 <template>
-    <div :id="signin">
+    <div class="signtop">
         <h1>タスク共有アプリ</h1>
         <h2>サインイン</h2>
         <h1 :class="'mistake'" v-if="!$store.state.signInResult">ユーザー名もしくはパスワードが間違っています。</h1>

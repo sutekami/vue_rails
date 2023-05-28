@@ -1,14 +1,17 @@
 <template>
-    <div :id="home">
+    <div class="TopPage">
         <h1>Welcome, {{ $store.state.userId }}</h1>
-        <div :id="task">
+        <div class="task">
             <textarea cols="30" rows="10" :style="'font-size: 20px;'" v-model="context"></textarea>
-            <button @click="createTask">投稿</button>
+            <button v-if="!notContext" @click="createTask">投稿</button>
+            <span v-else>必要なタスクを書き出そう！</span>
         </div>
-        <div :id="tasklist">
+        <div class="tasklist">
             <ul>
-                <li v-for="myTask in $store.state.myTasks" :key="myTask">
-                    {{ myTask.context }}
+                <li v-for="myTask in $store.state.myTasks" :key="myTask.id" :style="'display: flex;'">
+                    <span :class="{under_line: complete}">{{ myTask.context }}</span>
+                    <input type="checkbox" v-model="complete">
+                    <button @click="deleteTask(myTask.id)">タスク削除</button>
                 </li>
             </ul>
         </div>
@@ -21,6 +24,8 @@ export default ({
     data() {
         return {
             context: '',
+            notContext: true,
+            complete: false,
         }
     },
     created() {
@@ -32,6 +37,22 @@ export default ({
             await this.$store.dispatch('createTask', this.context);
             this.$store.dispatch('getMyTask');
             this.context = '';
+        },
+        async deleteTask(id) {
+            await this.$store.dispatch('deleteTask', id);
+            this.$store.dispatch('getMyTask');
+        }        
+    },
+    watch: {
+        context(newContext){
+            if (newContext) {
+                this.notContext = false;
+            } else {
+                this.notContext = true;
+            }
+        },
+        complete(newComplete) {
+            console.log(newComplete);
         }
     }
 })

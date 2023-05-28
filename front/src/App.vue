@@ -24,4 +24,7 @@ export default ({
 .mistake {
   color: red;
 }
+.under_line {
+  text-decoration: line-through 5px red;
+}
 </style>

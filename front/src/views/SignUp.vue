@@ -1,8 +1,9 @@
 <template>
-    <div :id="signup">
+    <div class="signup">
         <h1>サインアップ・新規登録</h1>
         <h2 :class="'mistake'" v-if="!$store.state.signUpResult">既にメールアドレスかユーザー名が使用されています。</h2>
         <h2 :class="'mistake'" v-if="!matchPassword">再入力されたパスワードが間違っています。</h2>
+        <h2 :class="'mistake'" v-if="!matchAll" >すべて入力してください。</h2>
         <div><input type="text" placeholder="メールアドレス" v-model="mail"></div>
         <div><input type="text" placeholder="ユーザー名" v-model="user_id"></div>
         <div><input type="password" placeholder="パスワード" v-model="password"></div>
@@ -22,6 +23,7 @@ export default ({
             password: '',
             re_password: '',
             matchPassword: true,
+            matchAll: true,
         }
     },
     created() {
@@ -30,15 +32,20 @@ export default ({
     methods: {
         signUp() {
             this.matchPassword = true;
-            if (this.password === this.re_password) {
-                const newUser = {
-                    mail: this.mail,
-                    user_id: this.user_id,
-                    password: this.password,
-                }
-                this.$store.dispatch('signUp', newUser);
+            this.matchAll = true;
+            if (!this.mail || !this.user_id || !this.password || !this.re_password) {
+                this.matchAll = false;
             } else {
-                this.matchPassword = !this.matchPassword;
+                if (this.password === this.re_password) {
+                    const newUser = {
+                        mail: this.mail,
+                        user_id: this.user_id,
+                        password: this.password,
+                    }
+                    this.$store.dispatch('signUp', newUser);
+                } else {
+                    this.matchPassword = !this.matchPassword;
+                }
             }
         }
     },

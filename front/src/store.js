@@ -36,15 +36,11 @@ export default new Vuex.Store({
                 router.push('/');
             }
         },
-        createTaskResult(_, data) {
-            if (data.result) console.log(true);
-        },
         getMyTask(state, data) {
             for (let i of data.task) {
-                console.log(i);
                 state.myTasks.push(i);
             }
-        }
+        },
     },
     actions: {
         async signUp({ commit }, newUser) {
@@ -61,23 +57,27 @@ export default new Vuex.Store({
             });
             commit('signInResult', res.data)
         },
-        async createTask({ commit }, context) {
+        async createTask(_, context) {
             const task = {
                 user_id: this.state.userId,
                 context: context,
                 checked: false,
             }
-            const res = await api.post('create_task', {
+            await api.post('create_task', {
                 task: task
             });
-            commit('createTaskResult', res.data);
         },
         async getMyTask({ commit }) {
             this.state.myTasks = [];
             const res = await api.post('get_my_task', { user_id: this.state.userId });
             commit('getMyTask', res.data);
+        },
+        async deleteTask(_, id) {
+            await api.post('delete_task', {
+                id: id,
+                user_id: this.state.userId,
+            });
         }
-
     },
     getters: {
         // 算出プロパティーのイメージ
