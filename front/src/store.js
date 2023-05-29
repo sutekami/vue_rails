@@ -11,6 +11,7 @@ export default new Vuex.Store({
         signInResult: true,
         userId: '',
         myTasks: [],
+        allTasks: [],
     },
     mutations: {
         initializeSignUpResult(state) {
@@ -39,6 +40,11 @@ export default new Vuex.Store({
         getMyTask(state, data) {
             for (let i of data.task) {
                 state.myTasks.push(i);
+            }
+        },
+        getAllTask(state, data) {
+            for (let i of data.task) {
+                state.allTasks.push(i);
             }
         }
     },
@@ -71,6 +77,11 @@ export default new Vuex.Store({
             this.state.myTasks = [];
             const res = await api.post('get_my_task', { user_id: this.state.userId });
             commit('getMyTask', res.data);
+        },
+        async getAllTask({ commit }) {
+            this.state.myTasks = [];
+            const res = await api.get('get_all_task');
+            commit('getAllTask', res.data);
         },
         async deleteTask(_, id) {
             await api.post('delete_task', {

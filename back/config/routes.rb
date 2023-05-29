@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   post '/sign_in', to: 'api#index'
   post '/sign_up', to: 'api#create'
 
+  get '/get_all_task', to: 'task#get_all_task'
   post '/get_my_task', to: 'task#index'
   post '/create_task', to: 'task#create'
   post '/delete_task', to: 'task#delete'
