@@ -54,7 +54,8 @@ export default ({
         async completeTask(myTask) {
             myTask.checked = !myTask.checked;
             await this.$store.dispatch('completeTask', myTask);
-            this.$store.dispatch('getMyTask');
+            this.$store.dispatch('getMyTask')
+            this.$store.dispatch('getAllTask');
         }
     },
     watch: {

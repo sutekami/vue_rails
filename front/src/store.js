@@ -79,7 +79,7 @@ export default new Vuex.Store({
             commit('getMyTask', res.data);
         },
         async getAllTask({ commit }) {
-            this.state.myTasks = [];
+            this.state.allTasks = [];
             const res = await api.get('get_all_task');
             commit('getAllTask', res.data);
         },
