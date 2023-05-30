@@ -9,4 +9,7 @@ Rails.application.routes.draw do
   post '/create_task', to: 'task#create'
   post '/delete_task', to: 'task#delete'
   post '/complete_task', to: 'task#update'
+
+  post '/follow', to: 'follow#create'
+  post '/get_following', to: 'follow#index'
 end

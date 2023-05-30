@@ -12,6 +12,7 @@ export default new Vuex.Store({
         userId: '',
         myTasks: [],
         allTasks: [],
+        followingUser: [],
     },
     mutations: {
         initializeSignUpResult(state) {
@@ -46,6 +47,15 @@ export default new Vuex.Store({
             for (let i of data.task) {
                 state.allTasks.push(i);
             }
+        },
+        getFollowingUser(state, data) {
+            for (let i of data.following) {
+                console.log(i.followed_id);
+                state.followingUser.push(i.followed_id);
+            }
+        },
+        pushFollowing(state, data) {
+            state.followingUser.push(data.following);
         }
     },
     actions: {
@@ -91,6 +101,18 @@ export default new Vuex.Store({
         },
         async completeTask(_, myTask) {
             await api.post('complete_task', myTask);
+        },
+        async following({ commit }, id) {
+            const res = await api.post('follow', {
+                follow_id: this.state.userId,
+                followed_id: id,
+            });
+            commit('pushFollowing', res.data);
+        },
+        async getFollowingUser({ commit }) {
+            this.state.followingUser = [];
+            const res = await api.post('/get_following', { user_id: this.state.userId });
+            commit('getFollowingUser', res.data);
         }
     },
     getters: {

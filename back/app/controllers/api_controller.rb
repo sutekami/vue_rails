@@ -6,13 +6,13 @@ class ApiController < ApplicationController
         user_id = User.find_by(user_id: params[:user][:user_id])
         if user_mail then
             if user_mail[:password] == params[:user][:password] then
-                render json: { result: true, user_id: user_mail[:user_id] }
+                render json: { result: true, user_id: user_mail[:user_id], id: user_mail[:id] }
             else
                 render json: { result: false }
             end
         elsif user_id then
             if user_id[:password] == params[:user][:password] then
-                render json: { result: true, user_id: user_id[:user_id] }
+                render json: { result: true, user_id: user_id[:user_id], id: user_id[:id] }
             else
                 render json: { result: false }
             end

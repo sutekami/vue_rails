@@ -1,6 +1,7 @@
 <template>
     <div id="TopPage">
         <h1>Welcome, {{ $store.state.userId }}</h1>
+        <h3>更新をかけると自動的にログアウトしてしまいます。</h3>
         <div class="task">
             <textarea cols="30" rows="10" :style="'font-size: 20px;'" v-model="context"></textarea>
             <button v-if="!notContext" @click="createTask">投稿</button>
@@ -21,6 +22,9 @@
             <h2>みんなのタスク</h2>
             <li v-for="allTask in $store.state.allTasks" :key="allTask.id">
                 {{ allTask.user_id }}
+                <button
+                    v-if="!($store.state.userId === allTask.user_id) && !($store.state.followingUser.find(user => user === allTask.user_id))"
+                    @click="following(allTask.user_id)">フォローする</button>
                 <div :class="{ under_line: allTask.checked }">{{ allTask.context }}</div>
             </li>
         </div>
@@ -40,22 +44,28 @@ export default ({
         this.$store.commit('emptyUserId');
         this.$store.dispatch('getMyTask');
         this.$store.dispatch('getAllTask');
+        this.$store.dispatch('getFollowingUser');
     },
     methods: {
         async createTask() {
             await this.$store.dispatch('createTask', this.context);
             this.$store.dispatch('getMyTask');
+            this.$store.dispatch('getAllTask');
             this.context = '';
         },
         async deleteTask(id) {
             await this.$store.dispatch('deleteTask', id);
             this.$store.dispatch('getMyTask');
+            this.$store.dispatch('getAllTask');
         },
         async completeTask(myTask) {
             myTask.checked = !myTask.checked;
             await this.$store.dispatch('completeTask', myTask);
             this.$store.dispatch('getMyTask')
             this.$store.dispatch('getAllTask');
+        },
+        following(user_id) {
+            this.$store.dispatch('following', user_id);
         }
     },
     watch: {
