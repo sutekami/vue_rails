@@ -12,6 +12,7 @@ export default new Vuex.Store({
         userId: '',
         myTasks: [],
         allTasks: [],
+        followingTasks: [],
         followingUser: [],
     },
     mutations: {
@@ -50,12 +51,16 @@ export default new Vuex.Store({
         },
         getFollowingUser(state, data) {
             for (let i of data.following) {
-                console.log(i.followed_id);
+                console.log(i);
                 state.followingUser.push(i.followed_id);
             }
         },
-        pushFollowing(state, data) {
-            state.followingUser.push(data.following);
+        getFollowingTask(state) {
+            for (let allTask of state.allTasks) {
+                if (state.followingUser.find(x => x === allTask.user_id)) {
+                    state.followingTasks.push(allTask);
+                }
+            }
         }
     },
     actions: {
@@ -90,8 +95,13 @@ export default new Vuex.Store({
         },
         async getAllTask({ commit }) {
             this.state.allTasks = [];
-            const res = await api.get('get_all_task');
-            commit('getAllTask', res.data);
+            this.state.followingUser = [];
+            this.state.followingTasks = [];
+            const res1 = await api.get('get_all_task');
+            commit('getAllTask', res1.data);
+            const res2 = await api.post('/get_following', { user_id: this.state.userId });
+            commit('getFollowingUser', res2.data);
+            commit('getFollowingTask');
         },
         async deleteTask(_, id) {
             await api.post('delete_task', {
@@ -102,18 +112,12 @@ export default new Vuex.Store({
         async completeTask(_, myTask) {
             await api.post('complete_task', myTask);
         },
-        async following({ commit }, id) {
-            const res = await api.post('follow', {
+        async following(_, id) {
+            await api.post('follow', {
                 follow_id: this.state.userId,
                 followed_id: id,
             });
-            commit('pushFollowing', res.data);
         },
-        async getFollowingUser({ commit }) {
-            this.state.followingUser = [];
-            const res = await api.post('/get_following', { user_id: this.state.userId });
-            commit('getFollowingUser', res.data);
-        }
     },
     getters: {
         // 算出プロパティーのイメージ

@@ -28,6 +28,15 @@
                 <div :class="{ under_line: allTask.checked }">{{ allTask.context }}</div>
             </li>
         </div>
+        <div id="following_task">
+            <h2>フォローした人のタスク</h2>
+            <ul>
+                <li v-for="followingTask in $store.state.followingTasks" :key="followingTask.id">
+                    {{ followingTask.user_id }}
+                    <div :class="{ under_line: followingTask.checked }">{{ followingTask.context }}</div>
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 
@@ -44,7 +53,6 @@ export default ({
         this.$store.commit('emptyUserId');
         this.$store.dispatch('getMyTask');
         this.$store.dispatch('getAllTask');
-        this.$store.dispatch('getFollowingUser');
     },
     methods: {
         async createTask() {
@@ -64,8 +72,9 @@ export default ({
             this.$store.dispatch('getMyTask')
             this.$store.dispatch('getAllTask');
         },
-        following(user_id) {
-            this.$store.dispatch('following', user_id);
+        async following(user_id) {
+            await this.$store.dispatch('following', user_id);
+            this.$store.dispatch('getAllTask');
         }
     },
     watch: {
