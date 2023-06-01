@@ -1,7 +1,6 @@
 <template>
     <div id="TopPage">
         <h1>Welcome, {{ $store.state.userId }}</h1>
-        <h3>更新をかけると自動的にログアウトしてしまいます。</h3>
         <div class="task">
             <textarea cols="30" rows="10" :style="'font-size: 20px;'" v-model="context"></textarea>
             <button v-if="!notContext" @click="createTask">投稿</button>
@@ -49,8 +48,7 @@ export default ({
             notContext: true,
         }
     },
-    created() {
-        this.$store.commit('emptyUserId');
+    async created() {
         this.$store.dispatch('getMyTask');
         this.$store.dispatch('getAllTask');
     },

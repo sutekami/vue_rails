@@ -15,13 +15,5 @@ module Back
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
     config.middleware.use ActionDispatch::ContentSecurityPolicy::Middleware
-    config.middleware.insert_before 0, Rack::Cors do
-      allow do
-          origins "*"
-          resource "*",
-          headers: :any,
-          methods: [:get, :post, :options, :head]
-      end
-    end
   end
 end

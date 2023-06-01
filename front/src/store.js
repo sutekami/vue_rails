@@ -23,7 +23,7 @@ export default new Vuex.Store({
             state.signInResult = true;
         },
         signUpResult(state, data) {
-            if (data.result) router.push('/top');
+            if (data.result) router.push('/');
             else state.signUpResult = false;
 
         },
@@ -34,32 +34,32 @@ export default new Vuex.Store({
             }
             else state.signInResult = false;
         },
-        emptyUserId(state) {
-            if (!state.userId) {
-                router.push('/');
-            }
-        },
         getMyTask(state, data) {
             for (let i of data.task) {
-                state.myTasks.push(i);
+                state.myTasks.unshift(i);
             }
         },
         getAllTask(state, data) {
             for (let i of data.task) {
-                state.allTasks.push(i);
+                state.allTasks.unshift(i);
             }
         },
         getFollowingUser(state, data) {
             for (let i of data.following) {
-                console.log(i);
                 state.followingUser.push(i.followed_id);
             }
         },
         getFollowingTask(state) {
             for (let allTask of state.allTasks) {
                 if (state.followingUser.find(x => x === allTask.user_id)) {
-                    state.followingTasks.push(allTask);
+                    state.followingTasks.unshift(allTask);
                 }
+            }
+        },
+        sessionLogin(state, data) {
+            if (data.result) {
+                state.userId = data.result;
+                router.push('/top');
             }
         }
     },
@@ -118,6 +118,12 @@ export default new Vuex.Store({
                 followed_id: id,
             });
         },
+        async sessionLogin({ commit }) {
+            if (!this.state.sessionLoginTOF) {
+                const res = await api.get('session_login');
+                commit('sessionLogin', res.data);
+            }
+        }
     },
     getters: {
         // 算出プロパティーのイメージ

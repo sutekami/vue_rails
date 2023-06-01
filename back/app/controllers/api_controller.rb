@@ -1,18 +1,21 @@
 class ApiController < ApplicationController
-    protect_from_forgery :except => [:create, :index]
+    protect_from_forgery :except => [:create, :index,]
 
     def index
         user_mail = User.find_by(mail: params[:user][:user_id])
         user_id = User.find_by(user_id: params[:user][:user_id])
         if user_mail then
-            if user_mail[:password] == params[:user][:password] then
-                tekitou = Task.all
+            if user_mail.authenticate(params[:user][:password]) then
+                session[:user_id] = user_mail[:user_id]
+                p session[:user_id]
                 render json: { result: true, user_id: user_mail[:user_id], id: user_mail[:id] }
             else
                 render json: { result: false }
             end
         elsif user_id then
-            if user_id[:password] == params[:user][:password] then
+            if user_id.authenticate(params[:user][:password]) then
+                session[:user_id] = user_id[:user_id]
+                p session[:user_id]
                 render json: { result: true, user_id: user_id[:user_id], id: user_id[:id] }
             else
                 render json: { result: false }
@@ -37,6 +40,14 @@ class ApiController < ApplicationController
                 new_user.save
                 render json: { result: true }
             end
+        end
+    end
+
+    def s_login
+        if session[:user_id] then
+            render json: { result: session[:user_id] }
+        else
+            render json: { result: false }
         end
     end
 

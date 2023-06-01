@@ -3,7 +3,7 @@
         <h1>サインアップ・新規登録</h1>
         <h2 :class="'mistake'" v-if="!$store.state.signUpResult">既にメールアドレスかユーザー名が使用されています。</h2>
         <h2 :class="'mistake'" v-if="!matchPassword">再入力されたパスワードが間違っています。</h2>
-        <h2 :class="'mistake'" v-if="!matchAll" >すべて入力してください。</h2>
+        <h2 :class="'mistake'" v-if="!matchAll">すべて入力してください。</h2>
         <div><input type="text" placeholder="メールアドレス" v-model="mail"></div>
         <div><input type="text" placeholder="ユーザー名" v-model="user_id"></div>
         <div><input type="password" placeholder="パスワード" v-model="password"></div>
@@ -14,6 +14,7 @@
 </template>
 
 <script>
+
 export default ({
     name: 'SignUp',
     data() {
@@ -27,7 +28,7 @@ export default ({
         }
     },
     created() {
-        this.$store.commit('initializeSignUpResult')
+        this.$store.commit('initializeSignUpResult');
     },
     methods: {
         signUp() {

@@ -10,6 +10,7 @@ export default ({
   name: 'App',
   created() {
     this.setCSRFToken();
+    this.$store.dispatch('sessionLogin');
   },
   methods: {
     async setCSRFToken() {
@@ -24,6 +25,7 @@ export default ({
 .mistake {
   color: red;
 }
+
 .under_line {
   text-decoration: line-through 5px red;
 }

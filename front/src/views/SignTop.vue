@@ -11,6 +11,7 @@
 </template>
 
 <script>
+
 export default ({
     name: 'SignTop',
     data() {
@@ -20,7 +21,7 @@ export default ({
         }
     },
     created() {
-        this.$store.commit('initializeSignInResult')
+        this.$store.commit('initializeSignInResult');
     },
     methods: {
         signIn() {
