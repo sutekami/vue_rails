@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import router from '@/router';
+
 export default ({
     name: 'TopPage',
     data() {
@@ -49,8 +51,12 @@ export default ({
         }
     },
     async created() {
-        this.$store.dispatch('getMyTask');
-        this.$store.dispatch('getAllTask');
+        if (this.$store.state.userId) {
+            this.$store.dispatch('getMyTask');
+            this.$store.dispatch('getAllTask');
+        } else {
+            router.push('/');
+        }
     },
     methods: {
         async createTask() {
