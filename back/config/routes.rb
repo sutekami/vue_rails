@@ -13,4 +13,6 @@ Rails.application.routes.draw do
 
   post '/follow', to: 'follow#create'
   post '/get_following', to: 'follow#index'
+
+  
 end
