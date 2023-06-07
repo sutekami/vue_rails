@@ -14,5 +14,6 @@ Rails.application.routes.draw do
   post '/follow', to: 'follow#create'
   post '/get_following', to: 'follow#index'
 
-  
+  post '/fighting', to: 'like#create'
+  post '/delete_fighting', to: 'like#delete'
 end

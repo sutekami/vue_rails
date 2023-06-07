@@ -9,7 +9,8 @@ export default new Vuex.Store({
     state: {
         signUpResult: true,
         signInResult: true,
-        userId: '',
+        userId: 0,
+        userName: '',
         myTasks: [],
         allTasks: [],
         followingTasks: [],
@@ -30,7 +31,8 @@ export default new Vuex.Store({
         signInResult(state, data) {
             if (data.result) {
                 router.push('/top');
-                state.userId = data.user_id;
+                state.userName = data.user_id;
+                state.userId = data.id;
             }
             else state.signInResult = false;
         },
@@ -40,9 +42,30 @@ export default new Vuex.Store({
             }
         },
         getAllTask(state, data) {
-            for (let i of data.task) {
-                state.allTasks.unshift(i);
+            for (let i = 0; i < data.task.length; i++) {
+                data.task[i].like = data.like[i];
+                state.allTasks.unshift(data.task[i]);
             }
+        },
+        addCreateTask(state, data) {
+            data.task.like = [];
+            state.myTasks.unshift(data.task);
+            state.allTasks.unshift(data.task);
+        },
+        completeTask(state, data) {
+            for (let allTask of state.allTasks) {
+                if (allTask.id === data.task.id) {
+                    allTask.checked = data.task.checked;
+                    break;
+                }
+            }
+            for (let myTask of state.myTasks) {
+                if (myTask.id === data.task.id) {
+                    myTask.checked = data.task.checked;
+                    break;
+                }
+            }
+            console.log(state.allTasks);
         },
         getFollowingUser(state, data) {
             for (let i of data.following) {
@@ -58,9 +81,20 @@ export default new Vuex.Store({
         },
         sessionLogin(state, data) {
             if (data.result) {
-                state.userId = data.result;
+                state.userName = data.user_id;
+                state.userId = data.id;
                 router.push('/top');
             }
+        },
+        addLikeInfo(state, data) {
+            const task = state.allTasks.find(allTask => allTask.id === data.like.task_id);
+            task.like.push(data.like);
+        },
+        deleteFighting(state, data) {
+            const task = state.allTasks.find(allTask => allTask.id === data.like.task_id);
+            task.like = task.like.filter(like => {
+                if (state.userId !== like.user_id) return like;
+            })
         }
     },
     actions: {
@@ -78,19 +112,20 @@ export default new Vuex.Store({
             });
             commit('signInResult', res.data)
         },
-        async createTask(_, context) {
+        async createTask({ commit }, context) {
             const task = {
-                user_id: this.state.userId,
+                user_id: this.state.userName,
                 context: context,
                 checked: false,
             }
-            await api.post('create_task', {
+            const res = await api.post('create_task', {
                 task: task
             });
+            commit('addCreateTask', res.data);
         },
         async getMyTask({ commit }) {
             this.state.myTasks = [];
-            const res = await api.post('get_my_task', { user_id: this.state.userId });
+            const res = await api.post('get_my_task', { user_id: this.state.userName });
             commit('getMyTask', res.data);
         },
         async getAllTask({ commit }) {
@@ -99,30 +134,57 @@ export default new Vuex.Store({
             this.state.followingTasks = [];
             const res1 = await api.get('get_all_task');
             commit('getAllTask', res1.data);
-            const res2 = await api.post('/get_following', { user_id: this.state.userId });
+            const res2 = await api.post('/get_following', { user_id: this.state.userName });
             commit('getFollowingUser', res2.data);
             commit('getFollowingTask');
         },
         async deleteTask(_, id) {
             await api.post('delete_task', {
                 id: id,
-                user_id: this.state.userId,
+                user_id: this.state.userName,
             });
         },
-        async completeTask(_, myTask) {
-            await api.post('complete_task', myTask);
+        async completeTask({ commit }, myTask) {
+            const task = {
+                id: myTask.id,
+                user_id: myTask.user_id,
+                context: myTask.context,
+                checked: !myTask.checked,
+            }
+            const res = await api.post('complete_task', task);
+            commit('completeTask', res.data);
         },
         async following(_, id) {
-            await api.post('follow', {
-                follow_id: this.state.userId,
+            const res = await api.post('follow', {
+                follow_id: this.state.userName,
                 followed_id: id,
             });
+            this.state.followingUser.push(res.data.follow.followed_id);
+            for (let allTask of this.state.allTasks) {
+                if (allTask.user_id === res.data.follow.followed_id) {
+                    this.state.followingTasks.unshift(allTask);
+                }
+            }
         },
         async sessionLogin({ commit }) {
             if (!this.state.sessionLoginTOF) {
                 const res = await api.get('session_login');
                 commit('sessionLogin', res.data);
             }
+        },
+        async fighting({ commit }, task_id) {
+            const res = await api.post('fighting', {
+                user_id: this.state.userId,
+                task_id: task_id
+            });
+            commit('addLikeInfo', res.data);
+        },
+        async deleteFighting({ commit }, task_id) {
+            const res = await api.post('delete_fighting', {
+                user_id: this.state.userId,
+                task_id: task_id,
+            });
+            commit('deleteFighting', res.data);
         }
     },
     getters: {

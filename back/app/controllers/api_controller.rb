@@ -7,7 +7,7 @@ class ApiController < ApplicationController
         if user_mail then
             if user_mail.authenticate(params[:user][:password]) then
                 session[:user_id] = user_mail[:user_id]
-                p session[:user_id]
+                session[:id] = user_mail[:id]
                 render json: { result: true, user_id: user_mail[:user_id], id: user_mail[:id] }
             else
                 render json: { result: false }
@@ -15,7 +15,7 @@ class ApiController < ApplicationController
         elsif user_id then
             if user_id.authenticate(params[:user][:password]) then
                 session[:user_id] = user_id[:user_id]
-                p session[:user_id]
+                session[:id] = user_id[:id]
                 render json: { result: true, user_id: user_id[:user_id], id: user_id[:id] }
             else
                 render json: { result: false }
@@ -44,8 +44,8 @@ class ApiController < ApplicationController
     end
 
     def s_login
-        if session[:user_id] then
-            render json: { result: session[:user_id] }
+        if session[:user_id] && session[:id] then
+            render json: { result: true, user_id: session[:user_id], id: session[:id] }
         else
             render json: { result: false }
         end

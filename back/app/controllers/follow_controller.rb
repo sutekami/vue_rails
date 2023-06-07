@@ -9,7 +9,7 @@ class FollowController < ApplicationController
     def create
         follow = Follow.new(follow_params)
         follow.save
-        render json: { following: params[:followed_id] }
+        render json: { follow: follow }
     end
 
     private

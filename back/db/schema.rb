@@ -27,6 +27,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_02_083433) do
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
+  create_table "posts", force: :cascade do |t|
+    t.string "usermail"
+    t.string "userid"
+    t.string "userpassword"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.string "user_id"
     t.string "context"

@@ -8,13 +8,17 @@ class TaskController < ApplicationController
 
     def get_all_task
         task = Task.all
-        render json: { task: task }
+        like = []
+        for i in task do
+            like.push(Like.where(task_id: i[:id]))
+        end
+        render json: { task: task, like: like }
     end
 
     def create
         task = Task.new(task_params)
         task.save
-        render json: { result: true }
+        render json: { task: task }
     end
 
     def delete
@@ -30,12 +34,17 @@ class TaskController < ApplicationController
 
     def update
         task = Task.find(params[:id])
-        task.update(task_params)
-        render json: { result: true }
+        task.update(task_update_params)
+        render json: { task: task }
     end
 
     private
     def task_params
         params.require(:task).permit(:user_id, :context, :checked)
+    end
+
+    private
+    def task_update_params
+        params.require(:task).permit(:id, :user_id, :context, :checked)
     end
 end
